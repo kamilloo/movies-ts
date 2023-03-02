@@ -1,21 +1,17 @@
 import express, {Request, Response} from "express";
 import {Movie} from "../../models/Movie";
-import {body, query, validationResult} from "express-validator";
+import {query, validationResult} from "express-validator";
+import {MovieRepository} from "../../DAO/movieRepository";
+import {Inject, Service} from "typedi";
+import {MovieRepositoryDB} from "../../DAO/movieRepositoryDB";
+import {pino} from "pino"
 
-export default class MovieController {
+@Service()
+export class MovieController {
     public path = '/movies';
     public router = express.Router();
 
-    private movies: Movie[] = [
-        {
-            Title: 'Matrix',
-            Director: 'John Doe',
-            Released: '2000-01-01',
-            Genre: 'action'
-        }
-    ]
-
-    constructor() {
+    constructor(@Inject(() => MovieRepositoryDB) private readonly movieRepository:MovieRepository) {
         this.initializeRoutes()
     }
 
@@ -24,17 +20,20 @@ export default class MovieController {
         this.router.post(this.path, this.createPost.bind(this))
     }
 
-    private getAllPosts(request:Request, response:Response) {
+    private async getAllPosts(request:Request, response:Response) {
         const error = validationResult(request)
         if (!error.isEmpty()){
             response.status(422).json({ errors:error.array()})
         }
-        response.send(this.movies)
+        let movies =  await this.movieRepository.getAll();
+        response.send(movies)
     }
 
-    private createPost(request:Request, response:Response) {
+    private async createPost(request:Request, response:Response) {
         const movie:Movie = request.body
-        this.movies.push(movie)
-        response.send(movie)
+        await this.movieRepository.add(movie).catch(err => {
+            pino().error(err)
+        })
+        response.send(movie).status(201)
     }
 }

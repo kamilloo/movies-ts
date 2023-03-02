@@ -1,7 +1,8 @@
+import 'reflect-metadata';
 import express, { Express, Request, Response } from "express";
-import bodyParser from "body-parser";
 import {App} from "./app";
-import MovieController from "./http/controllers/movieController";
+import {MovieController} from "./http/controllers/movieController";
+import {Container} from "typedi";
 
 const dotenv = require('dotenv');
 
@@ -9,7 +10,7 @@ dotenv.config();
 const port:number|any = process.env.PORT;
 
 const app = new App([
-    new MovieController()
+    Container.get(MovieController)
 ], port)
 
 
