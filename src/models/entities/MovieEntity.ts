@@ -7,7 +7,7 @@ export class MovieEntity implements Movie{
     @PrimaryGeneratedColumn()
     id:number
 
-    @Column
+    @Column()
     Title: string
 
     @Column()
