@@ -30,8 +30,8 @@ export class MovieController {
     }
 
     private async createPost(request:Request, response:Response) {
-        const movie:Movie = request.body
-        await this.movieRepository.add(movie).catch(err => pino().error(err))
-        response.send(movie).status(201)
+        let movie:Movie = request.body
+        const movieEntity = await this.movieRepository.add(movie).catch(err => pino().error(err))
+        response.send(movieEntity).status(201)
     }
 }
