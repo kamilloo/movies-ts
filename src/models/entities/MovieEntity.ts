@@ -1,8 +1,7 @@
-import {Movie} from "../Movie";
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity({ name: "movies"})
-export class MovieEntity implements Movie{
+export class MovieEntity{
 
     @PrimaryGeneratedColumn()
     id:number
@@ -18,4 +17,7 @@ export class MovieEntity implements Movie{
 
     @Column()
     director: string
+
+    @Column()
+    user_id: number
 }

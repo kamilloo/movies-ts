@@ -1,23 +1,27 @@
 import express, {Request, Response} from "express";
-import {Movie} from "../../models/Movie";
-import {query, validationResult} from "express-validator";
+import {body, query, validationResult} from "express-validator";
 import {MovieRepository} from "../../DAO/movieRepository";
 import {Inject, Service} from "typedi";
 import {MovieRepositoryDB} from "../../DAO/movieRepositoryDB";
 import {pino} from "pino"
+import {MovieEntity} from "../../models/entities/MovieEntity";
+import {MovieService} from "../../movies/MovieService";
 
 @Service()
 export class MovieController {
     public path = '/movies';
     public router = express.Router();
 
-    constructor(@Inject(() => MovieRepositoryDB) private readonly movieRepository:MovieRepository) {
+    constructor(
+        @Inject(() => MovieRepositoryDB) private readonly movieRepository:MovieRepository,
+        @Inject(() => MovieService) private readonly movieService:MovieService,
+    ) {
         this.initializeRoutes()
     }
 
     private initializeRoutes() {
         this.router.get(this.path, query('title').isLength({min:4}), this.getAllPosts.bind(this))
-        this.router.post(this.path, this.createPost.bind(this))
+        this.router.post(this.path, body('title').isLength({min: 4}), this.createPost.bind(this))
     }
 
     private async getAllPosts(request:Request, response:Response) {
@@ -29,9 +33,13 @@ export class MovieController {
         response.send(movies)
     }
 
-    private async createPost(request:Request, response:Response) {
-        let movie:Movie = request.body
-        const movieEntity = await this.movieRepository.add(movie).catch(err => pino().error(err))
+    private async createPost(request:Request, response:Response, ) {
+        const error = validationResult(request)
+        if (!error.isEmpty()){
+            response.status(422).json({ errors:error.array()})
+        }
+        const {title}:{ title:string } = request.body
+        const movieEntity = await this.movieService.create(title).catch(err => pino().error(err))
         response.send(movieEntity).status(201)
     }
 }

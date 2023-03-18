@@ -1,4 +1,3 @@
-import {Movie} from "../models/Movie";
 import {MovieRepository} from "./movieRepository";
 import {Service} from "typedi";
 import {DBDataSource} from "./DataDB";
@@ -11,7 +10,7 @@ export class MovieRepositoryDB implements MovieRepository{
         return  await DBDataSource.getRepository(MovieEntity).find()
     }
 
-    async add(movie: Movie): Promise<Movie> {
+    async save(movie: MovieEntity): Promise<MovieEntity> {
         return await DBDataSource.getRepository(MovieEntity).save(movie)
     }
 }
