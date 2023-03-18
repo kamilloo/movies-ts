@@ -18,7 +18,7 @@ describe('movies',  () => {
     it('should create new movie successful', function (done) {
 
         let title = 'matrix';
-        let newMovie = {Title: title , Director: 'John Doe', Released: '2000-01-01', Genre: 'fiction'} as Movie;
+        let newMovie = {title: title , director: 'John Doe', released: '2000-01-01', genre: 'fiction'} as Movie;
         supertest(app.app).post('/movies')
             .send(newMovie)
             .expect(201)

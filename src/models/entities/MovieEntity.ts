@@ -1,21 +1,21 @@
 import {Movie} from "../Movie";
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
-@Entity()
+@Entity({ name: "movies"})
 export class MovieEntity implements Movie{
 
     @PrimaryGeneratedColumn()
     id:number
 
     @Column()
-    Title: string
+    title: string
 
     @Column()
-    Released: string //date
+    released: string //date
 
     @Column()
-    Genre: string
+    genre: string
 
     @Column()
-    Director: string
+    director: string
 }
