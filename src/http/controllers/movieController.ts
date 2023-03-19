@@ -32,17 +32,18 @@ export class MovieController {
         if (!error.isEmpty()){
             response.status(422).json({ errors:error.array()})
         }
-        let movies =  await this.movieRepository.getAll();
+        let movies =  await this.movieRepository.getAll(user.userId);
         response.send(movies)
     }
 
-    private async createPost(request:Request, response:Response, ) {
+    private async createPost(request:JWTRequest, response:Response, ) {
         const error = validationResult(request)
         if (!error.isEmpty()){
             response.status(422).json({ errors:error.array()})
         }
+        const user:User = <User>request.auth
         const {title}:{ title:string } = request.body
-        const movieEntity = await this.movieService.create(title).catch(err => pino().error(err))
+        const movieEntity = await this.movieService.create(title, user).catch(err => pino().error(err))
         response.send(movieEntity).status(201)
     }
 }

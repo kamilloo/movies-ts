@@ -1,5 +1,4 @@
 import {Movie} from "../models/Movie";
-import {MovieEntity} from "../models/entities/MovieEntity";
 import {OmdbRepository} from "./omdbRepository";
 import {URL} from "url";
 import * as querystring from "querystring";

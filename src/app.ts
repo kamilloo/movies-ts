@@ -1,6 +1,6 @@
 import express from 'express';
 import * as bodyParser from "body-parser";
-import {jwt, jwtErrorHandler} from "./http/middlewares/jwtMiddleware";
+import {jwt} from "./http/middlewares/jwt";
 
 export class App {
     public app: express.Application
@@ -15,8 +15,8 @@ export class App {
     }
 
     private initializeMiddlewares() {
-        this.app.use(jwt)
-        this.app.use(jwtErrorHandler)
+        this.app.use(jwt.jwt())
+        this.app.use(jwt.jwtErrorHandler)
         this.app.use(bodyParser.json())
     }
 

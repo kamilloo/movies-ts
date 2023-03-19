@@ -6,6 +6,7 @@ import {OmdbRepositoryFake} from "../DAO/omdbRepositoryFake";
 import {OmdbRepository} from "../DAO/omdbRepository";
 import {Movie} from "../models/Movie";
 import {OmdbRepositoryImpl} from "../DAO/omdbRepositoryImpl";
+import {User} from "../models/User";
 
 @Service()
 export class MovieService {
@@ -16,7 +17,8 @@ export class MovieService {
     ) {
     }
 
-    public async create(title:string):Promise<MovieEntity| null>{
+    public async create(title:string, user:User):Promise<MovieEntity| null>{
+        //check if basic user achieved monthly limit
         const movie: Movie|null = await this.omdbRepository.getByTile(title);
         if (movie != null){
             let entity:MovieEntity = new MovieEntity();
@@ -24,7 +26,7 @@ export class MovieService {
             entity.title = movie.Title;
             entity.genre = movie.Genre
             entity.released = movie.Released
-            entity.user_id = 1;
+            entity.user_id = user.userId;
             return await this.movieRepository.save(entity)
         }
         return null;
