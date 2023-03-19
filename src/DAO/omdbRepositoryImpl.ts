@@ -1,17 +1,32 @@
 import {Movie} from "../models/Movie";
 import {MovieEntity} from "../models/entities/MovieEntity";
 import {OmdbRepository} from "./omdbRepository";
-import {URL, URLSearchParams} from "url";
+import {URL} from "url";
+import * as querystring from "querystring";
+import axios, {isCancel, AxiosError, AxiosResponse} from "axios";
+import {pino} from "pino";
+import {Service} from "typedi";
 
-
+@Service()
 export class OmdbRepositoryImpl implements OmdbRepository{
-    private base:string = "https://www.omdbapi.com/";
-    private apiKey:string = process.env.OMDB_APIKEY
+    private hostname:string = "https://www.omdbapi.com/";
+    private apiKey:string = <string>process.env.OMDB_APIKEY
 
     getByTile(title:string): Promise<Movie | null>{
-        const url = new URL(this.base)
-        url.searchParams.set("t", title)
-        url.searchParams.set("apiKey", this.apiKey)
+
+        const queryParams = {
+            apiKey: this.apiKey,
+            t: title
+        }
+        const queryString = querystring.stringify(queryParams);
+        const url = new URL(`${this.hostname}?${queryString}`)
+
+        return axios.get(url.toString())
+            .then((response:AxiosResponse) => <Movie>response.data)
+            .catch((error:AxiosError) => {
+                pino().error(error)
+                return null
+            })
 
     }
 }

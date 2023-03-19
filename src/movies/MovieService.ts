@@ -5,13 +5,14 @@ import {MovieRepository} from "../DAO/movieRepository";
 import {OmdbRepositoryFake} from "../DAO/omdbRepositoryFake";
 import {OmdbRepository} from "../DAO/omdbRepository";
 import {Movie} from "../models/Movie";
+import {OmdbRepositoryImpl} from "../DAO/omdbRepositoryImpl";
 
 @Service()
 export class MovieService {
 
     constructor(
         @Inject(() => MovieRepositoryDB) private readonly movieRepository:MovieRepository,
-        @Inject(() => OmdbRepositoryFake) private readonly omdbRepository:OmdbRepository,
+        @Inject(() => process.env.OMDB_API == "live" ? OmdbRepositoryImpl : OmdbRepositoryFake) private readonly omdbRepository:OmdbRepository,
     ) {
     }
 

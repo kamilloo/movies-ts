@@ -6,6 +6,8 @@ import {MovieRepositoryDB} from "../../DAO/movieRepositoryDB";
 import {pino} from "pino"
 import {MovieEntity} from "../../models/entities/MovieEntity";
 import {MovieService} from "../../movies/MovieService";
+import {expressjwt, Request as JWTRequest} from "express-jwt";
+import {User} from "../../models/User";
 
 @Service()
 export class MovieController {
@@ -24,7 +26,8 @@ export class MovieController {
         this.router.post(this.path, body('title').isLength({min: 4}), this.createPost.bind(this))
     }
 
-    private async getAllPosts(request:Request, response:Response) {
+    private async getAllPosts(request:JWTRequest, response:Response) {
+        const user:User = <User>request.auth
         const error = validationResult(request)
         if (!error.isEmpty()){
             response.status(422).json({ errors:error.array()})
