@@ -18,17 +18,20 @@ export class MovieService {
     }
 
     public async create(title:string, user:User):Promise<MovieEntity| null>{
-        //check if basic user achieved monthly limit
+        const monthlyCount = await this.movieRepository.countThisMonth(user.userId);
+        if (user.role == "basic" && monthlyCount >= 5){
+            return null;
+        }
         const movie: Movie|null = await this.omdbRepository.getByTile(title);
-        // if (movie != null){
-            // let entity:MovieEntity = new MovieEntity();
-            // entity.director = movie.Director;
-            // entity.title = movie.Title;
-            // entity.genre = movie.Genre
-            // entity.released = movie.Released
-            // entity.user_id = user.userId;
-            // return await this.movieRepository.save(entity)
-        // }
+        if (movie != null){
+            let entity:MovieEntity = new MovieEntity();
+            entity.director = movie.Director;
+            entity.title = movie.Title;
+            entity.genre = movie.Genre
+            entity.released = movie.Released
+            entity.user_id = user.userId;
+            return await this.movieRepository.save(entity)
+        }
         return null;
     }
 }

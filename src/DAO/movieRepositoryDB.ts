@@ -15,4 +15,8 @@ export class MovieRepositoryDB implements MovieRepository{
     async save(movie: MovieEntity): Promise<MovieEntity> {
         return await DBDataSource.getRepository(MovieEntity).save(movie)
     }
+
+    countThisMonth(userId: number): Promise<number> {
+        return Promise.resolve(0);
+    }
 }
